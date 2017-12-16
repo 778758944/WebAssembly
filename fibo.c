@@ -1,4 +1,16 @@
-/* 不考虑溢出 */
+#include <stdio.h>
+#include <stdlib.h>
+long fibonacci(int n);
+
+int main(int agvc, char ** argv){
+	int num;
+	long res;
+	num = atoi(argv[1]);
+	res = fibonacci(num);
+	printf("%ld\n", res);
+	return 0;
+}
+
 long fibonacci(int num){
     if(num <= 0) return 0;
     if(num == 1 || num == 2) return 1;
@@ -11,8 +23,4 @@ long fibonacci(int num){
         fn2 = fn1 + fn;
     }
     return fn2;
-}
-
-int add(int x, int y){
-    return x + y;
 }

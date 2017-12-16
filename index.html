@@ -11,28 +11,53 @@
 <body>
     <h1>WebAssembly</h1>
     <script>
+        var importObject = {
+          console: {
+            log: function(arg) {
+              console.log(arg);
+            }
+          }
+        };
     	function loadWebAssembly(path) {
     		return fetch(path)
     			.then(res => res.arrayBuffer())
-    			.then(WebAssembly.instantiate)
-    			.then(mod => mod.instance)
+    			.then((buffer) => {
+                    return WebAssembly.compile(buffer);
+                })
+    			.then(mod => {
+                    console.log(mod);
+                    var imports = {env: {}};
+                    Object.assign(imports.env, {
+                        memoryBase: 0,
+                        tableBase: 0,
+                        memory: new WebAssembly.Memory({initial: 256, maximum: 256}),
+                        table: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"})
+                    })
+                    return new WebAssembly.Instance(mod, imports);
+                })
     	}
 
-    	loadWebAssembly('/fibonacci.wasm').then((instance) => {
-    		// console.log(instance);
-    		const { _Z9fibonaccii } = instance.exports;
+    	loadWebAssembly('/asmjs/add.wasm').then((instance) => {
+    		console.log(instance.exports);
+            const { fibonacci } = instance.exports
+            console.log(fibonacci(1,1,2,4,10));
+            // const { _fibonacci } = instance.exports;
+            // console.log(_fibonacci(50));
+    		// const { _Z9fibonaccii } = instance.exports;
     		// console.time('c-fib');
     		// console.log(_Z9fibonaccii(45));
     		// console.timeEnd('c-fib');
     		// console.log(_Z9fibonaccii(50));
     		// console.time('fib');
-    		for(var i = 1; i <= 45; i++){
-    			console.time(`c-fib-${i}`);
-    			console.log(_Z9fibonaccii(i));
-    			console.timeEnd(`c-fib-${i}`);
-    		}
+    		// for(var i = 1; i <= 45; i++){
+    		// 	console.time(`c-fib-${i}`);
+    		// 	console.log(_Z9fibonaccii(i));
+    		// 	console.timeEnd(`c-fib-${i}`);
+    		// }
     		// console.timeEnd('fib');
-    	})
+    	}).catch((e) => {
+            console.log(e);
+        })
     </script>
     <!-- <script src="/test.js"></script> -->
 </body>
