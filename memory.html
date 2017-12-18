@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<title>WebAssembly Memory</title>
+		<script src="/loadWebAssembly.js"></script>
+	</head>
+	<body>
+		<h1>WebAssembly Memory</h1>
+		<script>
+			var myMemory = new WebAssembly.Memory({
+				initial: 256,
+			});
+			console.log(myMemory);
+			loadWebAssembly('/memory.wasm', {
+				memory: myMemory,
+				// _printf: console.log
+			}).then((instance) => {
+				console.log(instance);
+				var { _data, _add, _getDatas, _str, _showStr, _addFloat } = instance.exports;
+				var I32 = new Int32Array(myMemory.buffer, _data, 10);
+				var I8 = new Int8Array(myMemory.buffer, _str, 10);
+				for(var i = 0; i < 10; i++){
+					I32[i] = i;
+					I8[i] = 97;
+				}
+				console.log(_addFloat(1.1, 1.2));
+				// _add(1);
+				// console.log(I32);
+				// _showStr();
+			}).catch((err) => {
+				console.log(err);
+			})
+		</script>
+	</body>
+</html>

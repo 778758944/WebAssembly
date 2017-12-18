@@ -1,6 +1,7 @@
-int main(){
-	int a = 5;
-	int b = 6;
-	int c = a + b;
+#include <stdio.h>
+#include <emscripten.h>
+int main(void){
+	EM_ASM({ alert('from c') });
+	printf("hello world");
 	return 0;
 }

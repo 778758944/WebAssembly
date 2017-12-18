@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>wast</title>
+        <script src="../loadWebAssembly.js"></script>
+    </head>
+    <body>
+        <h1>wast</h1>
+        <script>
+            var myMemory = new WebAssembly.Memory({
+                initial: 1,
+            });
+            var logString = function(offset, length){
+                var bytes = new Uint8Array(myMemory.buffer, offset, length);
+                console.log(bytes);
+                var string = new TextDecoder('utf8').decode(bytes);
+                console.log(string);
+            }
+            loadWebAssembly('./demo.wasm', {
+                log: function(arg){
+                    console.log(arg);
+                },
+                memory:myMemory,
+                logString,
+            }).then((instance) => {
+                console.log(instance);
+                const { add, getAnwserPlus1, logIt, writeHi, callByIndex } = instance.exports;
+                console.log(add(2, 2));
+                console.log(getAnwserPlus1());
+                console.log(writeHi());
+                console.log(callByIndex(0));
+                console.log(callByIndex(1));
+                // console.log(logIt());
+            })
+        </script>
+    </body>
+</html>

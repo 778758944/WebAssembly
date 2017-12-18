@@ -11,21 +11,32 @@
 <body>
     <h1>fibonacci js</h1>
     <script>
-    	function fibonacci(n){
-			if(n > 2){
-				return fibonacci(n-1) + fibonacci(n-2);
-			} else {
-				return 1;
-			}
+    	function fibonacci(num) {
+		    if(num < 0)  return 0;
+		    else if(num == 1) return 1;
+		    else if(num == 2) return 1;
+		    var fn = 1,
+			    fn1 = 1 ,
+			    i = 4,
+			    fn2 = fn + fn1
+		    while(i <= num){
+		        fn = fn1;
+		        fn1 = fn2;
+		        fn2 = fn + fn1;
+		        i = i + 1;
+		    }   
+		    return fn2;
 		}
 
-		// console.time('js-fib');
-		// console.log(fibonacci(45));
-		for(var i = 1;i <= 45;i++){
-			console.time(`j-fib-${i}`);
-			console.log(fibonacci(i));
-			console.timeEnd(`j-fib-${i}`);
-		}
+		console.time('js-fib');
+		console.log(fibonacci(46));
+		console.timeEnd('js-fib');
+
+		// for(var i = 1;i <= 45;i++){
+		// 	// console.time(`j-fib-${i}`);
+		// 	console.log(fibonacci(i));
+		// 	// console.timeEnd(`j-fib-${i}`);
+		// }
 		// console.timeEnd('js-fib');
     </script>
 </body>

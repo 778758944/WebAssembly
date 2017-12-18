@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<title>WebAssembly table</title>
+		<script src='/loadWebAssembly.js'></script>
+	</head>
+	<body>
+		<h1>WebAssembly table</h1>
+		<script type="text/javascript">
+			var tbl = new WebAssembly.Table({
+				initial: 4,
+				element: 'anyfunc'
+			});
+			loadWebAssembly('/table.wasm', {
+				table: tbl,
+				abort: () => console.log('abort'),
+				"_pass_fptr_to_js": (fptr) => console.log(fptr),
+
+			}).then((instance) => {
+				console.log(instance);
+				// instance.exports["__post_instantiate"]();
+				// instance.exports["_run_test"]();
+				// tbl.get(0)();
+				console.log(tbl.get(1)());
+				console.log(tbl.get(2)());
+
+				// console.log(tbl.get(0));
+			})
+		</script>
+	</body>
+</html>

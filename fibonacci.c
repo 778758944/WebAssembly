@@ -12,7 +12,3 @@ long fibonacci(int num){
     }
     return fn2;
 }
-
-int add(int x, int y){
-    return x + y;
-}
