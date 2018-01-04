@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>maze</title>
+        <script src="/Maze/maze.js"></script>
+    </head>
+    <body>
+        <canvas id="maze" width="800" height="600"/>
+        <script>
+            var canvas = document.getElementById('maze');
+            // var ctx = canvas.getContext("2d");
+            console.time("js maze");
+            var maze = new Maze(100, 100, canvas);
+            maze.generate();
+            maze.draw();
+            maze.callPath();
+            console.timeEnd("js maze");
+        </script>
+    </body>
+</html>

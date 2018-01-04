@@ -1,0 +1,92 @@
+<html>
+	<head>
+		<meta charset="utf8"/>
+		<title>canvas edge</title>
+		<style type="text/css">
+			*{
+				padding: 0;
+				margin: 0;
+			}
+			canvas {
+				display: block;
+			}
+		</style>
+		<script src="/loadWebAssembly.js"></script>
+	</head>
+	<body>
+		<script src="/canvas-edge/app.js"></script>
+		<script>
+			var _toGray, index, arr, _lapColor;
+			function loadImg(src){
+				var img = new Image();
+				return new Promise(function(resolve, reject){
+					img.onload = function(){
+						resolve(img);
+					}
+					img.src = src;
+				})
+			}
+
+			function createOriginCvs(img){
+				var width = 200;
+				var height = 200;
+				var cvs = document.createElement('canvas');
+				cvs.width = width;
+				cvs.height = height;
+				document.body.appendChild(cvs);
+				var ctx = cvs.getContext('2d');
+				ctx.drawImage(img, 0, 0, width, height);
+				return ctx.getImageData(0, 0, width, height);
+			}
+
+			function createEdgeCvs(data){
+				for(var i = 0; i < data.data.length; i++){
+					arr[i] = data.data[i];
+				}
+				// console.log(arr);
+				console.time("c edge");
+				_toGray(data.width, data.height);
+				_lapColor(data.width, data.height);
+				console.timeEnd("c edge");
+				for(var i = 0; i < data.data.length; i++){
+					data.data[i] = arr[i];
+				}
+				var cvs = document.createElement("canvas");
+				cvs.width = data.width;
+				cvs.height = data.height;
+				document.body.appendChild(cvs);
+				var ctx = cvs.getContext('2d');
+				// console.time("js edge");
+				// Edge.toGray(data.data);
+				// Edge.lapColor(data.data, data.width, data.height);
+				// console.timeEnd("js edge");
+				// console.log('c',arr);
+				// console.log('js',data.data);
+				ctx.putImageData(data, 0, 0);
+			}
+
+			// loadImg("/canvas-edge/ok.png")
+			// .then(createOriginCvs)
+			// .then(createEdgeCvs)
+			var myMemory = new WebAssembly.Memory({
+				initial: 256,
+			})
+
+			loadWebAssembly('/canvas-edge/app.wasm', {
+				memory:myMemory
+			}).then((ins) => {
+				_toGray = ins.exports._toGray;
+				_lapColor = ins.exports._lapColor;
+				index = ins.exports._arr;
+				arr = new Int32Array(myMemory.buffer, index, 1000000);
+				// console.log(_toGray);
+				
+				loadImg("/canvas-edge/ok.png")
+				.then(createOriginCvs)
+				.then(createEdgeCvs)
+			}).catch((e) => {
+				console.log(e);
+			})
+		</script>
+	</body>
+</html>

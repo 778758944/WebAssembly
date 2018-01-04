@@ -7,7 +7,7 @@
                 return WebAssembly.compile(buffer);
             })
 			.then(mod => {
-                console.log(mod);
+                // console.log('mod', mod);
                 var defaultEnv = {
                     memoryBase: 0,
                     tableBase: 0,

@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>hello</title>
+	</head>
+	<body>
+		<button id="btn">button</button>
+		<script type="text/javascript" src="/compilec/hello2.js"></script>
+		<script>
+			console.log(Module);
+			console.log(Module.ccall);
+			console.log(Module.addOnInit);
+			Module.addOnInit(function() {
+				console.log('module init');
+				Module._myFunction();
+				document.getElementById("btn").onclick = function(){
+					var result = Module.ccall("myFunction", // name of c function
+						null, // return type
+						null, // argument types
+						null, // arguments
+					);
+					console.log(result);
+				}
+
+				var ptr = Module.ccall("myArray", null, null, null);
+				console.log(Module.getValue(ptr+20, 'i32'), 'i32');
+
+				console.log("myArray",Module.ccall("myArray", null, null, null));
+			});
+		</script>
+	</body>
+</html>

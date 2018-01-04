@@ -12,12 +12,39 @@
 <body>
     <h1>WebAssembly</h1>
     <script>
+		function fibonacci(num) {
+		    if(num <= 0)  return 0;
+		    else if(num == 1 || num == 2) return 1;
+		    var fn = 1,
+			    fn1 = 1 ,
+			    i = 4,
+			    fn2 = fn + fn1
+		    while(i <= num){
+		        fn = fn1;
+		        fn1 = fn2;
+		        fn2 = fn + fn1;
+		        i = i + 1;
+		    }   
+		    return fn2;
+		}
+		var c_arr = [],
+			js_arr = [];
     	loadWebAssembly('/fibonacci.wasm').then((instance) => {
     		console.log(instance.exports);
             const { _fibonacci } = instance.exports
             console.time("wasm time");
-            console.log(_fibonacci(46));
+			for(var i = 1; i < 45; i++){
+				c_arr.push(_fibonacci(i));
+			}
+            // console.log(_fibonacci(46));
             console.timeEnd("wasm time");
+			console.time("js time");
+			for(var i = 1; i < 45; i++){
+				js_arr.push(fibonacci(i));
+			}
+			console.timeEnd("js time");
+			console.log("c_arr", c_arr);
+			console.log("js_arr", js_arr);
             // const { _fibonacci } = instance.exports;
             // console.log(_fibonacci(50));
     		// const { _Z9fibonaccii } = instance.exports;
