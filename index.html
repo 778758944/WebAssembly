@@ -8,10 +8,12 @@
 <meta name="keywords" content="">
 <link href="" rel="stylesheet">
 <script src="./loadWebAssembly.js"></script>
+<script src="./a.out.js"></script>
 </head>
 <body>
     <h1>WebAssembly</h1>
     <script>
+    	var fib_asm = Module.cwrap('fibonacci', 'number', ['number']);
 		function fibonacci(num) {
 		    if(num <= 0)  return 0;
 		    else if(num == 1 || num == 2) return 1;
@@ -30,21 +32,30 @@
 		var c_arr = [],
 			js_arr = [];
     	loadWebAssembly('/fibonacci.wasm').then((instance) => {
-    		console.log(instance.exports);
+    		console.log(instance);
             const { _fibonacci } = instance.exports
             console.time("wasm time");
-			for(var i = 1; i < 45; i++){
-				c_arr.push(_fibonacci(i));
+			for(var i = 1; i < 47; i++){
+				// c_arr.push(_fibonacci(i));
+				_fibonacci(i);
 			}
             // console.log(_fibonacci(46));
             console.timeEnd("wasm time");
 			console.time("js time");
-			for(var i = 1; i < 45; i++){
-				js_arr.push(fibonacci(i));
+			for(var i = 1; i < 47; i++){
+				// js_arr.push(fibonacci(i));
+				fibonacci(i);
 			}
 			console.timeEnd("js time");
-			console.log("c_arr", c_arr);
-			console.log("js_arr", js_arr);
+
+			console.time("asmjs time");
+			for(var i = 1; i < 47; i++){
+				// js_arr.push(fibonacci(i));
+				fib_asm(i);
+			}
+			console.timeEnd("asmjs time");
+			// console.log("c_arr", c_arr);
+			// console.log("js_arr", js_arr);
             // const { _fibonacci } = instance.exports;
             // console.log(_fibonacci(50));
     		// const { _Z9fibonaccii } = instance.exports;

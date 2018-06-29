@@ -3,7 +3,7 @@ int Laplacian[3][3] = {
     {1, -4, 1},
     {0, 1, 0},
 };
-int arr[1000000];
+short arr[1000000];
 
 int gray(int R, int G, int B) {
     int a = (int)((R*299 + G*587 + B*114 + 500) / 1000);

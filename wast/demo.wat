@@ -3,7 +3,7 @@
     (import "env" "logString" (func $logString (param i32 i32)))
     (import "env" "memory" (memory 1))
     (table 2 anyfunc)
-    (data (i32.const 0) "Hi")
+    (data (i32.const 0) "Hii")
     (func $add (param $lhs i32) (param $rhs i32) (result i32)
         get_local $lhs
         get_local $rhs
@@ -38,7 +38,7 @@
     )
     (func (export "writeHi")
         i32.const 0
-        i32.const 2
+        i32.const 3
         call $logString
     )
     (export "add" (func $add))

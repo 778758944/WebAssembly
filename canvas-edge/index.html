@@ -43,33 +43,42 @@
 				for(var i = 0; i < data.data.length; i++){
 					arr[i] = data.data[i];
 				}
-				// console.log(arr);
-				console.time("c edge");
-				_toGray(data.width, data.height);
-				_lapColor(data.width, data.height);
-				console.timeEnd("c edge");
-				for(var i = 0; i < data.data.length; i++){
-					data.data[i] = arr[i];
-				}
+
+				var wasmCvs = document.createElement("canvas");
+				wasmCvs.width = data.width;
+				wasmCvs.height = data.height;
+				document.body.appendChild(wasmCvs);
+				var wasmCtx = wasmCvs.getContext('2d');
+
 				var cvs = document.createElement("canvas");
 				cvs.width = data.width;
 				cvs.height = data.height;
 				document.body.appendChild(cvs);
 				var ctx = cvs.getContext('2d');
-				// console.time("js edge");
-				// Edge.toGray(data.data);
-				// Edge.lapColor(data.data, data.width, data.height);
-				// console.timeEnd("js edge");
-				// console.log('c',arr);
-				// console.log('js',data.data);
+
+				var wasmImageData = wasmCtx.getImageData(0, 0, data.width, data.height);
+
+
+				console.time("c edge");
+				_toGray(data.width, data.height);
+				_lapColor(data.width, data.height);
+				console.timeEnd("c edge");
+				for(var i = 0; i < data.data.length; i++){
+					wasmImageData.data[i] = arr[i];
+				}
+				console.time("js edge");
+				Edge.toGray(data.data);
+				Edge.lapColor(data.data, data.width, data.height);
+				console.timeEnd("js edge");
 				ctx.putImageData(data, 0, 0);
+				wasmCtx.putImageData(wasmImageData, 0, 0);
 			}
 
 			// loadImg("/canvas-edge/ok.png")
 			// .then(createOriginCvs)
 			// .then(createEdgeCvs)
 			var myMemory = new WebAssembly.Memory({
-				initial: 256,
+				initial: 256, //16k
 			})
 
 			loadWebAssembly('/canvas-edge/app.wasm', {
@@ -78,7 +87,7 @@
 				_toGray = ins.exports._toGray;
 				_lapColor = ins.exports._lapColor;
 				index = ins.exports._arr;
-				arr = new Int32Array(myMemory.buffer, index, 1000000);
+				arr = new Int16Array(myMemory.buffer, index, 1000000);
 				// console.log(_toGray);
 				
 				loadImg("/canvas-edge/ok.png")
