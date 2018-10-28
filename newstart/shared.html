@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title></title>
+        <script src="./loadAssembly.js"></script>
+    </head>
+    <body>
+        <script>
+            var importEnv = {
+                js: {
+                    memory: new WebAssembly.Memory({initial: 1}),
+                    table: new WebAssembly.Table({initial: 1, element: "anyfunc"})
+                }
+            }
+            Promise.all([loadAssembly("./shared0.wasm", importEnv), loadAssembly("./shared1.wasm", importEnv)]).then((res) => {
+                const {doIt} = res[1].exports;
+                console.log(doIt());
+            }).catch((err) => {
+                console.log(err);
+            })
+        </script>
+    </body>
+</html>

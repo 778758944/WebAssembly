@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>WebAssembly New Start</title>
+    </head>
+    <body>
+        <script>
+            let mem = new WebAssembly.Memory({
+                initial: 1,
+                maximum: 10,
+            });
+            /*
+            fetch("./memory.wasm").then(res => {
+                return res.arrayBuffer();
+            }).then((buffer) => {
+                return new WebAssembly.instantiate(buffer, {
+                    js: {
+                        mem,
+                    }
+                })
+            }).then((mod) => {
+                console.log(mod.module);
+                var i32 = new Uint32Array(mem.buffer);
+                console.log(i32.length);
+                for (let i = 0; i < 10; i++) {
+                    i32[i] = i;
+                }
+
+                var sum = mod.instance.exports.accumulate(0, 10);
+                console.log(sum);
+
+            }).catch(err => console.error(err));
+            */
+            fetch("./memory.wasm").then((res) => {
+                return res.arrayBuffer();
+            }).then(buf => {
+                return WebAssembly.compile(buf);
+            }).then((mod) => {
+                // 模块的import和export
+                console.log(WebAssembly.Module.HEAP16);
+                console.log(WebAssembly.Module.exports(mod));
+                console.log(WebAssembly.Module.imports(mod));
+            }).catch((err) => console.log(err));
+        </script>
+    </body>
+</html>

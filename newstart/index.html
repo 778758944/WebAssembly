@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title>WebAssembly New Start</title>
+    </head>
+    <body>
+        <script>
+            let memory = new WebAssembly.Memory({
+                initial: 256,
+                maximum: 512
+            });
+
+
+            let UINT8 = new Uint8Array(memory.buffer);
+
+            let textencoder = new TextEncoder("utf-8");
+            let textdecoder = new TextDecoder("utf-8");
+            // let hello = textencoder.encode("hello");
+
+            // for (let i = 0; i < hello.length; i++) {
+            //     UINT8[i] = hello[i];
+            // }
+
+            // console.log(textdecoder.decode(UINT8));
+
+            fetch("./module.wasm").then((res) => {
+                console.log(res);
+                return res.arrayBuffer();
+            }).then((buf) => {
+                return WebAssembly.compile(buf);
+            }).then((mod) => {
+                var importConfig = {env: {}};
+                Object.assign(importConfig.env, {
+                    memoryBase: 0,
+                    tableBase: 0,
+                    memory: memory,
+                    table: new WebAssembly.Table({
+                        initial: 4,
+                        maximum: 10,
+                        element: 'anyfunc',
+                    }),
+                    abort: function(num) {
+                        //
+                    },
+                    _strcmp: function(a, b) {
+                        console.log(a, b);
+                        return 0;
+                    },
+                    _printf: function(end, b) {
+                        // var arr = UINT8.slice(0, 20);
+                        console.log(end, b);
+                        console.log(UINT8);
+                        console.log(textdecoder.decode(UINT8.slice(20, 30)));
+                    }
+                });
+                return new WebAssembly.Instance(mod, importConfig);
+            }).then((inst) => {
+                console.log(inst);
+                const { add, getAnswerPlus1 } = inst.exports;
+
+                console.log(add(3, 3));
+                console.log(getAnswerPlus1());
+                // const { _print, _a, _b } = inst.exports;
+                // _print();
+                // console.log(_a.value);
+                // console.log(_b.value);
+                // console.log(textdecoder.decode(UINT8.slice(0, 10)));
+                // console.log(textdecoder.decode(UINT8.slice(10, 20)));
+                // console.log(textdecoder.decode(UINT8.slice(0, 20)));
+                // _print();
+                // const { _add, _getNum, _getAge, _p, _arr } = inst.exports;
+                // _add(10, 21);
+                // console.log(_getNum());
+                // console.log(_getAge());
+                // console.log(_p.value);
+                // console.log(_arr.value);
+                // console.log(textdecoder.decode(UINT8));
+                // console.log(_add(1, 2));
+                // console.log(_add);
+                // const {add, memory, table} = inst.exports;
+                // console.log(memory.buffer.byteLength);
+                // var arrBuf = new Uint8Array(memory.buffer);
+                // console.log(arrBuf.length);
+
+            }).catch(err => console.error(err));
+        </script>
+    </body>
+</html>

@@ -1,29 +1,54 @@
 <html>
 	<head>
 		<title>WebAssembly Memory</title>
-		<script src="/loadWebAssembly.js"></script>
+		<script src="./loadWebAssembly.js"></script>
 	</head>
 	<body>
 		<h1>WebAssembly Memory</h1>
 		<script>
+			var memory = new WebAssembly.Memory({
+				initial: 1,
+				maximum: 100
+			});
+
+			var bufarr = new Uint8Array(memory.buffer);
+			console.log(bufarr.length);
+			bufarr[0] = 250;
+			console.log(bufarr[0]);
+
+			memory.grow(1);
+			// memory 内存改变后， arraybuffer会清零
+
+			bufarr = new Uint8Array(memory.buffer);
+
+			console.log(bufarr.length);
+
+
+
+
+
+
 			var myMemory = new WebAssembly.Memory({
 				initial: 256,
 			});
 			console.log(myMemory);
-			loadWebAssembly('/memory.wasm', {
+			loadWebAssembly('./memory2.wasm', {
 				memory: myMemory,
 				// _printf: console.log
 			}).then((instance) => {
-				console.log(instance);
-				var { _data, _add, _getDatas, _str, _showStr, _addFloat } = instance.exports;
-				var I32 = new Int32Array(myMemory.buffer, _data, 10);
-				var I8 = new Int8Array(myMemory.buffer, _str, 10);
+				console.log("instance", instance);
+				var { _data, _add, _getData, _str, _showStr, _addFloat } = instance.exports;
+				console.log("data", _data);
+				var I32 = new Int32Array(myMemory.buffer, 0, 10);
+				var I8 = new Int8Array(myMemory.buffer, I32.length * 4, 10);
 				for(var i = 0; i < 10; i++){
 					I32[i] = i;
 					I8[i] = 97;
 				}
-				console.log(_addFloat(1.1, 1.2));
-				// _add(1);
+
+				console.log("_getData", _getData());
+				// console.log(_addFloat(1.1, 1.2));
+				_add(1);
 				// console.log(I32);
 				// _showStr();
 			}).catch((err) => {

@@ -1,13 +1,9 @@
 (function(W){
 	function loadWebAssembly(path, importEnv) {
-		importEnv = importEnv || {};
+		// importEnv = importEnv || {};
 		return fetch(path)
 			.then(res => res.arrayBuffer())
 			.then((buffer) => {
-                return WebAssembly.compile(buffer);
-            })
-			.then(mod => {
-                console.log('mod', mod);
                 var defaultEnv = {
                     memoryBase: 0,
                     tableBase: 0,
@@ -15,11 +11,12 @@
                     table: new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"})
                 };
                 var imports = {env: {}};
-                var env = Object.assign(defaultEnv, importEnv);
+                var env = importEnv ? Object.assign(defaultEnv, importEnv) : defaultEnv;
 
 
                 Object.assign(imports.env, env);
-                return new WebAssembly.Instance(mod, imports);
+
+                return WebAssembly.instantiate(buffer, imports);
             })
 	}
 

@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>test wabt</title>
+    </head>
+    <body>
+        <script>
+            var memory = new WebAssembly.Memory({
+                initial: 1,
+            });
+            fetch("./module.wasm").then((res) => {
+                return res.arrayBuffer();
+            }).then((buffer) => {
+                return WebAssembly.compile(buffer);
+            }).then((mod) => {
+                return new WebAssembly.Instance(mod, {
+                    console: {
+                        log: function(a) {
+                            console.log(a);
+                        },
+                        consoleLogString(offset, length) {
+                            var bytes = new Uint8Array(memory.buffer, offset, length);
+                            var textDecode = new TextDecoder("utf8");
+                            console.log(textDecode.decode(bytes));
+                        },
+                    },
+                    js: {
+                        mem: memory,
+                    }
+                });
+            }).then(inst => {
+                console.log(inst);
+                const { add, logIt, sayHi, callByIndex } = inst.exports;
+                console.log(add(3, 2));
+                logIt();
+                sayHi();
+                console.log(callByIndex(0));
+            }).catch(err => console.error(err));
+        </script>
+    </body>
+</html>

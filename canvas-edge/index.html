@@ -28,8 +28,8 @@
 			}
 
 			function createOriginCvs(img){
-				var width = 200;
-				var height = 200;
+				var width = img.width;
+				var height = img.height;
 				var cvs = document.createElement('canvas');
 				cvs.width = width;
 				cvs.height = height;
@@ -90,7 +90,7 @@
 				arr = new Int16Array(myMemory.buffer, index, 1000000);
 				// console.log(_toGray);
 				
-				loadImg("/canvas-edge/ok.png")
+				loadImg("/canvas-edge/test.jpg")
 				.then(createOriginCvs)
 				.then(createEdgeCvs)
 			}).catch((e) => {
