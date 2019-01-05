@@ -12,6 +12,7 @@
             }).then((buffer) => {
                 return WebAssembly.compile(buffer);
             }).then((mod) => {
+                console.log(WebAssembly.Module.imports(mod));
                 return new WebAssembly.Instance(mod, {
                     console: {
                         log: function(a) {

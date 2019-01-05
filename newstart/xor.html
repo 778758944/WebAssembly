@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>xor</title>
+    <script src="./tt.js"></script>
+</head>
+<body>
+    <h1>xor</h1>
+    <script>
+        let wasmObject;
+        fetch('./tt.wasm').then((res) => {
+            console.log(res);
+            return res.arrayBuffer();
+        }).then((buffer) => {
+            var config = {};
+            config.wasmBinary = buffer;
+            const m = Module(config);
+            console.log(m);
+            wasmObject = m;
+            const HEAP32 = m.HEAP32;
+            console.log(HEAP32.length);
+            // wasmObject.asm.A = wasmObject;
+            /*
+            float_multiply_array = wasmObject.cwrap("float_multiply_array", "number", ["number", "number", "number"]);
+            var data = new Float32Array([1,2,3,4,5]);
+            var nDataBytes = data.length * data.BYTES_PER_ELEMENT;
+            // alloc memory on wasm memory
+            var dataPtr = wasmObject._malloc(nDataBytes);
+            var dataHeap = new Uint8Array(wasmObject.HEAPU8.buffer, dataPtr, nDataBytes);
+            dataHeap.set(new Uint8Array(data.buffer));
+            float_multiply_array(2, dataHeap.byteOffset, data.length);
+            Module._free(dataHeap.byteOffset);
+            */
+            /*
+           setTimeout(() => {
+                var img = new Image();
+                img.decoding = "sync";
+                img.src= "./girl2.jpg";
+                var cvs = document.createElement("canvas");
+                cvs.width = 100;
+                cvs.height = 100;
+                var ctx = cvs.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                document.body.append(cvs);
+                var imageData = ctx.getImageData(0,0,100,100);
+                var data = imageData.data;
+                var size = data.length * data.BYTES_PER_ELEMENT;
+                var p = wasmObject._malloc(size);
+                var dataHeap = new Uint8Array(wasmObject.HEAPU8.buffer, p, size);
+                dataHeap.set(new Uint8Array(data.buffer));
+                console.log(wasmObject._getImageThemeColor(dataHeap.byteOffset, dataHeap.byteLength, 8));
+                wasmObject._free(dataHeap);
+           }, 2000);
+           */
+        }).catch((err) => {
+            console.log(err);
+        })
+    </script>
+</body>
+</html>
