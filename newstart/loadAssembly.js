@@ -9,6 +9,7 @@
             return new WebAssembly.Instance(mod, importConf);
         }).catch((err) => {
             console.log(err);
+            return Promise.reject(err);
         });
     }
 })(window)

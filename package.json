@@ -1,0 +1,19 @@
+{
+  "name": "webassembly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "a.out.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/778758944/WebAssembly.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/778758944/WebAssembly/issues"
+  },
+  "homepage": "https://github.com/778758944/WebAssembly#readme"
+}
