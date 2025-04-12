@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        var Module = {};
+        Module['wasmMemory'] = new WebAssembly.Memory({
+            initial: 256,
+            maximum: 256,
+            shared: true
+        }) 
+    </script>
+    <script src="./test3.js"></script>
+    <script>
+        // function set_background_color(color_idx) {
+        //     var color = "red";
+        //     if (color_idx === 1) color = "blue";
+        //     else if (color_idx === 2) color = "green";
+            
+        //     document.body.style.backgroundColor = color;
+        // }
+        // var js_wrapped_fib = Module.cwrap("fib", "number", ["number"]);
+        // setTimeout(() => {
+        //     console.log(js_wrapped_fib(5));
+        // }, 1000);
+        var addOne = Module.cwrap("addOne", null, ["number", "number"]);
+        var addOneArray = Module.cwrap("addOneArray", null, ["number", "number", "number"]);
+        var testPrint = Module.cwrap("testPrint", "number", []);
+        Module['onRuntimeInitialized'] = () => {
+            console.log('wasmMemory', wasmMemory, testPrint);
+            var ptr = Module._malloc(4);
+            const buffer = wasmMemory.buffer;
+            const intArray = new Int32Array(buffer);
+            intArray[ptr/4] = 97;
+            console.log('ptr', ptr); 
+            console.log(testPrint(ptr));
+        }
+        
+
+        setTimeout(() => {
+            // var input_ptr = Module._malloc(4);
+            // var output_ptr = Module._malloc(4);
+
+            // var value = 6;
+
+            // Module.setValue(input_ptr, value, "i32");
+            // addOne(input_ptr, output_ptr);
+            // var result = Module.getValue(output_ptr, "i32");
+            // console.log("result = ", result);
+            // Module._free(input_ptr);
+            // Module._free(output_ptr);
+
+            var input_array = new Int32Array([10, 5, -3, 120, -70]);
+            var len = input_array.length;
+            var bytes_per_element = input_array.BYTES_PER_ELEMENT;
+
+            var input_ptr = Module._malloc(len * bytes_per_element);
+            var output_ptr = Module._malloc(len * bytes_per_element);
+
+            Module.HEAP32.set(input_array, input_ptr/bytes_per_element);
+            addOneArray(input_ptr, output_ptr, len);
+            var output_array = new Int32Array(Module.HEAP32.buffer, output_ptr, len);
+            console.log("input arr: ", input_array);
+            console.log("output arr: ", output_array);
+
+            Module._free(input_ptr);
+            Module._free(output_ptr);
+        }, 10000);
+
+
+    </script>
+</head>
+<body>
+    <p>Open console</p>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAssembly Multithread</title>
+</head>
+<body>
+    <script src="./example.js"></script>
+    <script>
+        const testThread = Module.cwrap("testThread", null, []);
+        const testThread2 = Module.cwrap("testThread2", null, []);
+        const testThread3 = Module.cwrap("testThread3", null, []);
+        function getValue(v) {
+            console.log("vvv: ", v);
+        }
+        // setTimeout(() => {
+        //     testThread2();
+        // }, 1000);
+        // setTimeout(() => {
+        //     testThread();
+        // }, 5000);
+        setTimeout(() => {
+            // testThread();
+            PThread.allocateUnusedWorker();
+            const worker = PThread.unusedWorkers[0];
+            PThread.loadWasmModuleToWorker(worker);
+            console.log("PThread: ", PThread.unusedWorkers);
+            // console.log("worker: ", worker);
+            testThread3();
+            console.log("PThread: ", PThread.unusedWorkers);
+            worker.onmessage = (e) => {
+                console.log("dddd: ", e);
+            }
+            // worker.onmessage((e) => {
+            //     console.log("dddd: ", e);
+            // }); 
+            /*
+            PThread.allocateUnusedWorker();
+            // console.log(PThread.unusedWorkers);
+            let threadworker = PThread.unusedWorkers.pop();
+            // // console.log(PThread.unusedWorkers);
+            PThread.loadWasmModuleToWorker(threadworker).then(() => {
+                console.log("load success fully");
+                testThread2();
+                testThread();
+            });
+            */
+        }, 3000);
+        // window.addEventListener("message", (e) => {
+        //     console.log("dddd: ", e);
+        // })
+    </script>
+</body>
+</html>
